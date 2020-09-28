@@ -6,45 +6,86 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            sx: 7,
-            sy: -8,
+            s_real: 7,
+            s_imag: -8,
             scale: 12,
         };
+
+        this.primeProps = {
+            radius: 7,
+            fillStyle: "magenta",
+            strokeColor: "none"
+        };
+
+        this.pathProps = {
+            fillStyle: "none",
+            strokeColor: "grey",
+            strokeWidth: "3"
+        };
+    }
+
+    keydown(e) {
+        switch (e.keyCode) {
+        case 187:
+            this.setState((prevState) => {
+                const newScale = Math.min(20, prevState.scale+1);
+                return {
+                    s_real: prevState.s_real,
+                    s_imag: prevState.s_imag,
+                    scale: newScale
+                }
+            });
+            break;
+        case 189:
+            this.setState((prevState) => {
+                const newScale = Math.max(1, prevState.scale-1);
+                return {
+                    s_real: prevState.s_real,
+                    s_imag: prevState.s_imag,
+                    scale: newScale
+                }
+            });
+            break;
+        }
     }
 
     onclick(e) {
         const bbox = e.target.getBBox();
         const sx = ((bbox.x + bbox.width/2) - 500) / this.state.scale;
-        const sy = ((bbox.y + bbox.height/2) - 480) / this.state.scale;
+        const sy = -((bbox.y + bbox.height/2) - 480) / this.state.scale;
         this.setState((prevState) => {
-            return {sx: sx,
-                    sy: sy,
+            return {s_real: sx,
+                    s_imag: sy,
                     scale: prevState.scale
                    }
         });
     }
 
-    getPrimePoints(xmin, ymin, xmax, ymax, cx, cy, scale) {
+    getPrimePoints(rmin, imin, rmax, imax, cx, cy, scale) {
         let points = [];
-        for (let i=xmin; i<=xmax; i++) {
-            for (let j=ymin; j<=ymax; j++) {
-                if (new Gaussian(i,j).isPrime()) {
-                    points.push([cx + scale*i, cy + scale*j]);
+        for (let r=rmin; r<=rmax; r++) {
+            for (let i=imin; i<=imax; i++) {
+                if (new Gaussian(r,i).isPrime()) {
+                    const x = cx + scale*r;
+                    const y = cy - scale*i;
+                    points.push([x, y]);
                 }
             }
         }
         return points;
     }
 
-    getPath(sx, sy, cx, cy, scale) {
-        const start_pt = new Gaussian(sx, sy);
+    getPath(cx, cy, scale) {
+        const start_pt = new Gaussian(this.state.s_real, this.state.s_imag);
 
         let curr_pt = new Gaussian(start_pt);
         let curr_dir = new Gaussian(1,0);
-        let points = [[cx + scale*curr_pt.x, cy + scale*curr_pt.y]];
+        let points = [[cx + scale*curr_pt.x, cy - scale*curr_pt.y]];
         do {
             curr_pt = curr_pt.add(curr_dir);
-            points.push([cx + scale*curr_pt.x, cy + scale*curr_pt.y]);
+            const x = cx + scale*curr_pt.x;
+            const y = cy - scale*curr_pt.y;
+            points.push([x, y]);
             if (curr_pt.isPrime()) {
                 curr_dir = curr_dir.multiply(new Gaussian(0,1));
             }
@@ -57,40 +98,52 @@ class App extends React.Component {
             path_data += ' ' + points[i][0] + ' ' + points[i][1];
         }
 
-        const props = {
-            fillStyle: "none",
-            strokeColor: "grey",
-            strokeWidth: "2"
-        };
-
-        return <path fill={props.fillStyle}
-                     stroke={props.strokeColor}
-                     stroke-width={props.strokeWidth}
+        return <path fill={this.pathProps.fillStyle}
+                     stroke={this.pathProps.strokeColor}
+                     stroke-width={this.pathProps.strokeWidth}
                      d={path_data} />
     }
 
     render() {
-        const fun = (items) => items.map((item) => {
+        // convert a list of points into a collection of SVG circles
+        const dotfun = (items) => items.map((item) => {
             const x = item[0];
             const y = item[1];
             const rad = 5;
-            return <circle cx={x} cy={y} r={rad} onClick={ this.onclick.bind(this)} />
+            return <circle cx={x} cy={y} r={this.primeProps.radius}
+                           onClick={ this.onclick.bind(this)}
+                           fill={this.primeProps.fillStyle}
+                           stroke={this.primeProps.strokeStyle}
+                   />
         })
 
         const w = 1000;
         const h = 960;
-        const prime_points = this.getPrimePoints(-50,-50, 50, 70, w/2, h/2, this.state.scale);
-        const path = this.getPath(this.state.sx, this.state.sy, w/2, h/2, this.state.scale);
+        const xcount = Math.ceil((w/2) / this.state.scale);
+        const ycount = Math.ceil((h/2) / this.state.scale);
+        console.log('xcount = ' + xcount + ', ycount = ' + ycount + ', scale = ' + this.state.scale);
+        const rmin = -xcount;
+        const rmax = xcount;
+        const imin = -ycount;
+        const imax = ycount;
+        const prime_points = this.getPrimePoints(rmin, imin, rmax, imax, w/2, h/2, this.state.scale);
+        const path = this.getPath(w/2, h/2, this.state.scale);
         const box = [0, 0, w, h];
         return (
             <>
-            <svg xmlns="http://www.w3.org/2000/svg" width={w/2} height={h/2} viewBox={box}>
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     width={w/2}
+                     height={h/2}
+                     viewBox={box}
+                     onKeyDown={this.keydown.bind(this)}
+                     tabIndex="1"
+                >
                 <g fill="#FF00FF">
                     {path}
-                    <> {fun(prime_points)} </>
+                    <> {dotfun(prime_points)} </>
                 </g>
             </svg>
-                <h3>Starting Point: {this.state.sx} + {this.state.sy} <em>i</em></h3>
+                <h3>Starting Point: {this.state.s_real} + {this.state.s_imag} <em>i</em></h3>
             </>
         );
     }
