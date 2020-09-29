@@ -12,7 +12,7 @@ class App extends React.Component {
         };
 
         this.primeProps = {
-            radius: 7,
+            radius: 5,
             fillStyle: "magenta",
             strokeColor: "none"
         };
@@ -51,8 +51,9 @@ class App extends React.Component {
 
     onclick(e) {
         const bbox = e.target.getBBox();
-        const sx = ((bbox.x + bbox.width/2) - 500) / this.state.scale;
-        const sy = -((bbox.y + bbox.height/2) - 480) / this.state.scale;
+        const mat = e.target.getScreenCTM().inverse();
+        const sx = Math.round((e.clientX * mat.a + mat.e) / this.state.scale);
+        const sy = -Math.round((e.clientY * mat.d + mat.f) / this.state.scale);
         this.setState((prevState) => {
             return {s_real: sx,
                     s_imag: sy,
@@ -111,7 +112,6 @@ class App extends React.Component {
             const y = item[1];
             const rad = 5;
             return <circle cx={x} cy={y} r={this.primeProps.radius}
-                           onClick={ this.onclick.bind(this)}
                            fill={this.primeProps.fillStyle}
                            stroke={this.primeProps.strokeStyle}
                    />
@@ -121,21 +121,22 @@ class App extends React.Component {
         const h = 960;
         const xcount = Math.ceil((w/2) / this.state.scale);
         const ycount = Math.ceil((h/2) / this.state.scale);
-        console.log('xcount = ' + xcount + ', ycount = ' + ycount + ', scale = ' + this.state.scale);
         const rmin = -xcount;
         const rmax = xcount;
         const imin = -ycount;
         const imax = ycount;
-        const prime_points = this.getPrimePoints(rmin, imin, rmax, imax, w/2, h/2, this.state.scale);
-        const path = this.getPath(w/2, h/2, this.state.scale);
-        const box = [0, 0, w, h];
+        const prime_points = this.getPrimePoints(rmin, imin, rmax, imax, 0, 0, this.state.scale);
+        const path = this.getPath(0, 0, this.state.scale);
+        const box = [-w/2, -h/2, w, h];
         return (
             <>
+                <h2>Gaussian Primes</h2>
                 <svg xmlns="http://www.w3.org/2000/svg"
                      width={w/2}
                      height={h/2}
                      viewBox={box}
                      onKeyDown={this.keydown.bind(this)}
+                     onClick={ this.onclick.bind(this)}
                      tabIndex="1"
                 >
                 <g fill="#FF00FF">
