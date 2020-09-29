@@ -28,7 +28,7 @@ class App extends React.Component {
         switch (e.keyCode) {
         case 187:
             this.setState((prevState) => {
-                const newScale = Math.min(20, prevState.scale+1);
+                const newScale = Math.min(22, prevState.scale+1);
                 return {
                     s_real: prevState.s_real,
                     s_imag: prevState.s_imag,
@@ -38,7 +38,7 @@ class App extends React.Component {
             break;
         case 189:
             this.setState((prevState) => {
-                const newScale = Math.max(1, prevState.scale-1);
+                const newScale = Math.max(4, prevState.scale-1);
                 return {
                     s_real: prevState.s_real,
                     s_imag: prevState.s_imag,
