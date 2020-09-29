@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/gaussian_primes/static/css/main.5f361e03.chunk.css",
+    "main.js": "/gaussian_primes/static/js/main.b9a45306.chunk.js",
+    "main.js.map": "/gaussian_primes/static/js/main.b9a45306.chunk.js.map",
+    "runtime-main.js": "/gaussian_primes/static/js/runtime-main.358a3728.js",
+    "runtime-main.js.map": "/gaussian_primes/static/js/runtime-main.358a3728.js.map",
+    "static/js/2.f997fcb7.chunk.js": "/gaussian_primes/static/js/2.f997fcb7.chunk.js",
+    "static/js/2.f997fcb7.chunk.js.map": "/gaussian_primes/static/js/2.f997fcb7.chunk.js.map",
+    "index.html": "/gaussian_primes/index.html",
+    "precache-manifest.1a8c2c224dd22bd667aab7f7ea55287f.js": "/gaussian_primes/precache-manifest.1a8c2c224dd22bd667aab7f7ea55287f.js",
+    "service-worker.js": "/gaussian_primes/service-worker.js",
+    "static/css/main.5f361e03.chunk.css.map": "/gaussian_primes/static/css/main.5f361e03.chunk.css.map",
+    "static/js/2.f997fcb7.chunk.js.LICENSE.txt": "/gaussian_primes/static/js/2.f997fcb7.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.358a3728.js",
+    "static/js/2.f997fcb7.chunk.js",
+    "static/css/main.5f361e03.chunk.css",
+    "static/js/main.b9a45306.chunk.js"
+  ]
+}
