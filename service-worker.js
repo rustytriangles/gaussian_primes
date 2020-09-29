@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/gaussian_primes/precache-manifest.1a8c2c224dd22bd667aab7f7ea55287f.js"
+  "/gaussian_primes/precache-manifest.747dab8f462af7e993ffa99393ba8532.js"
 );
 
 self.addEventListener('message', (event) => {
